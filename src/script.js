@@ -1,6 +1,6 @@
 /**
  * Battery Profit Calculator Module with payback months, profitability check,
- * max power enforcement and toast notifications via Notyf,
+ * max power enforcement 
  * enhanced D3 chart with cost line.
  */
 import * as d3 from 'd3';
@@ -98,74 +98,79 @@ function update(changedId='') {
 
     // profit kWh/year
     const profitKwh = Sn - So;
-    inputs.profit.value = rnd(profitKwh);
 
     // yearly profit in € for year 1
-    const base = profitKwh * price - installC;
-    const profitYearOne = base > 0 ? base : 0;
+    const base = Number(profitKwh) * Number(price);
     // build data with year 0 start
-    const dataYearly = [{ year: 0, priceKwh: price, yearly: profitYearOne, cumul: profitYearOne}];
-    const dataMonthly = [{ month: 0, priceKwh: price, monthly: profitYearOne / 12,  cumul: profitYearOne / 12 }];
+    let dataYearly = [{ year: 0, priceKwh: price, yearly: base, cumul: base}];
+    let dataMonthly = [{ month: 0, priceKwh: price, monthly: base / 12,  cumul: base / 12 }];
 
-    let paybackExact = null;
-    const month = 0;
+    let stopCounting = false;
+    let month = 1;
+    let monthCount = 0;
     for (let y = 1; y <= life; y++) {
         const prevPriceKwh = dataYearly[y-1].priceKwh;
         const prevCumul = dataYearly[y-1].cumul;
 
-
-        const newPriceKwh = prevPriceKwh * rnd(inc / 100); 
-
-        base = newPriceKwh * profitKwh - installC;
-        const profitYear = base > 0 ? base : 0;
+        const newPriceKwh = prevPriceKwh * inc / 100 + prevPriceKwh; 
+        
+        const base = newPriceKwh * profitKwh;
         dataYearly.push({
             year: y,
             priceKwh: newPriceKwh,
-            yearly: profitYear,
-            cumul: prevCumul + profitYear,
-            base: base
+            yearly: base,
+            cumul: prevCumul + base,
         });
+        console.log(dataYearly)
 
-        for (let i = 0; i >=11; i++){
-            month += 1;
-            prevMonthPrice = dataMonthly[month - 1].monthly;
+        for (let i = 1; i <= 12; i++){
+            const prevMonthCumul = dataMonthly[month - 1].cumul;
+            const thisMonthProfit = base / 12; 
+            const cumul = prevMonthCumul + thisMonthProfit;
+
             dataMonthly.push({
                 month: month,
                 priceKwh: newPriceKwh,
-                monthly: profitYear / 12,
-                cumul: prevMonthPrice + profitYear / 12,
-                base: base / 12
+                monthly: base / 12,
+                cumul: thisMonthProfit + base / 12,
             })
+
+            if (cumul >= 0 && !stopCounting){
+                monthCount = month
+            }
+
+            month += 1;
         }
     }
-}
 
-// if never profitable, totalProfit is negative
-const totalProfit = cum - installC;
 
-// text summary
-const avgText = `Je spaart gemiddeld <strong>€${rnd(cum/12)}</strong> per jaar, over ${life} jaar.`;
-const profitColor = isProfitable ? COLOR_PRIMARY : COLOR_NOT_PROF;
-const totalText = `Je totale winst op de batterij is <strong style="color:${profitColor}">€${rnd(totalProfit)}</strong>.`;
+    // if never profitable, totalProfit is negative
+    const totalProfit = dataYearly[life].cumul - installC;
+    const isProfitable = totalProfit > 0 ? true : false;
+    const average = totalProfit / life;
 
-let paybackText;
-if (isProfitable && paybackExact != null) {
-    const yrs = Math.floor(paybackExact);
-    const mos = Math.round((paybackExact - yrs) * 12);
-    paybackText = `Je batterij is terugbetaald na <strong>${yrs}</strong> jaar en <strong>${mos}</strong> maanden.`;
-} else {
-    paybackText = `Je batterij, is niet rendabel, vermogen te laag.`;
-}
 
-document.getElementById('text-div').innerHTML = `
+    // text summary
+    const avgText = `Je spaart gemiddeld <strong>€${average}</strong> per jaar, over ${life} jaar.`;
+    const profitColor = isProfitable ? COLOR_PRIMARY : COLOR_NOT_PROF;
+    const totalText = `Je totale winst op de batterij is <strong style="color:${profitColor}">€${rnd(totalProfit)}</strong>.`;
+
+    let paybackText;
+    if (isProfitable > 0) {
+        paybackText = `Je batterij is terugbetaald na <strong>${monthCount}</strong> maanden.`;
+    } else {
+        paybackText = `Je batterij, is niet rendabel.`;
+    }
+
+    document.getElementById('text-div').innerHTML = `
     <p>${avgText}</p>
     <p>${paybackText}</p>
     <p>${totalText}</p>
   `;
 
-// render chart and table
-drawChart(dataMonthly, installC, paybackExact, isProfitable);
-drawTable(dataTable, isProfitable);
+    // render chart and table
+    drawChart(dataYearly, installC, isProfitable);
+    drawTable(dataYearly, isProfitable);
 }
 
 /**
@@ -182,7 +187,7 @@ function drawChart(data, installC, paybackExact, isProfitable) {
         .attr('height', height);
 
     // y domain includes install cost line
-    const maxC = Math.max(d3.max(data, d => d.cumulative), installC);
+    const maxC = Math.max(d3.max(data, d => d.cumul), installC);
     const x = d3.scaleLinear()
         .domain([0, d3.max(data, d => d.year)])
         .range([margin.left, width - margin.right]);
@@ -197,7 +202,7 @@ function drawChart(data, installC, paybackExact, isProfitable) {
         .attr('d', d3.area()
             .x(d => x(d.year))
             .y0(y(0))
-            .y1(d => y(d.cumulative))
+            .y1(d => y(d.cumul))
         );
 
     // cumulative line
@@ -206,7 +211,7 @@ function drawChart(data, installC, paybackExact, isProfitable) {
         .attr('fill','none').attr('stroke',COLOR_PRIMARY).attr('stroke-width',2)
         .attr('d', d3.line()
             .x(d => x(d.year))
-            .y(d => y(d.cumulative))
+            .y(d => y(d.cumul))
         );
 
     // installation cost line
@@ -228,7 +233,7 @@ function drawChart(data, installC, paybackExact, isProfitable) {
         .call(d3.axisLeft(y));
 
     // payback marker if profitable
-    if (isProfitable && paybackExact != null) {
+    if (isProfitable) {
         svg.append('line')
             .attr('x1', x(paybackExact)).attr('x2', x(paybackExact))
             .attr('y1', y(0)).attr('y2', y(maxC))
@@ -248,14 +253,14 @@ function drawTable(data, isProfitable) {
     let html = `<h3>Overzicht per jaar</h3>
     <table>
       <thead>
-        <tr><th>Jaar</th><th>Jaarlijkse winst (€)</th><th>Cumulatieve winst (€)</th></tr>
+        <tr><th>Jaar</th><th>Opbrengst (€)</th><th>Cumulatief (€)</th></tr>
       </thead><tbody>`;
     data.slice(1).forEach(d => {
         html += `
       <tr>
         <td>${d.year}</td>
         <td>${rnd(d.yearly)}</td>
-        <td>${rnd(d.cumulative)}</td>
+        <td>${rnd(d.cumul)}</td>
       </tr>`;
     });
     html += `</tbody></table>`;
