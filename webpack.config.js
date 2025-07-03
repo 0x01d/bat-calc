@@ -1,8 +1,10 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const TerserPlugin = require('terser-webpack-plugin')
 
 module.exports = {
+  mode: 'production',
   entry: './src/index.js',
   output: {
     filename: '[name].[contenthash].js',
@@ -11,7 +13,6 @@ module.exports = {
     library: 'BatteryCalculator',
     libraryTarget: 'umd',
     globalObject: 'this',
-    mode: 'production'
   },
   module: {
     rules: [
@@ -28,6 +29,19 @@ module.exports = {
     ]
   },
   optimization: {
+    minimize: true,
+    minimizer: [new TerserPlugin({
+      terserOptions: {
+        compress: {
+          drop_console: true,
+          dead_code: true,
+        },
+        output: {
+          comments: false,
+        }
+      },
+      extractComments: false
+    })],
     splitChunks: { chunks: 'all' }
   },
   plugins: [
@@ -36,7 +50,8 @@ module.exports = {
     }),
     new HtmlWebpackPlugin({
       template: './src/index.html',
-      inject: 'body'
+      inject: 'body',
+      minify: true
     })
   ],
   devServer: {
