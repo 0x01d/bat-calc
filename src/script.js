@@ -51,6 +51,7 @@ function update(changedId='') {
     let So  = +inputs.self_old.value || 0;
     let Snp = +inputs.self_new_pct.value || 0;
     let Sn  = +inputs.self_new.value || 0;
+    let profit = +inputs.profit || 0;
     const price     = +inputs.price_kwh.value   || 0;
     const installC  = +inputs.install_cost.value|| 0;
     const inc       = (+inputs.price_inc.value || 0) / 100;
@@ -98,7 +99,7 @@ function update(changedId='') {
 
     // profit kWh/year
     const profitKwh = Sn - So;
-    inputs.self_new.value = rnd(profitKwh)
+    inputs.self_new.profit = rnd(profitKwh)
 
     // yearly profit in € for year 1
     const base = Number(profitKwh) * Number(price);
