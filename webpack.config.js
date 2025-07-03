@@ -10,7 +10,8 @@ module.exports = {
     clean: true,
     library: 'BatteryCalculator',
     libraryTarget: 'umd',
-    globalObject: 'this'
+    globalObject: 'this',
+    mode: 'production'
   },
   module: {
     rules: [
@@ -18,14 +19,7 @@ module.exports = {
         test: /\.js$/,
         exclude: /node_modules/,
         use: { loader: 'babel-loader',
-               options: { presets:
-                   ['@babel/preset-env', {
-                       targets: '>0.25%, not dead',
-                       useBuiltins: false,
-                       modules: false
-                   }] 
-               } 
-        }
+               options: { presets: ['@babel/preset-env'] } }
       },
       {
         test: /\.css$/,
