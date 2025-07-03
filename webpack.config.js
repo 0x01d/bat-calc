@@ -1,7 +1,6 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-const TerserPlugin = require('terser-webpack-plugin')
 
 module.exports = {
   mode: 'production',
@@ -29,19 +28,6 @@ module.exports = {
     ]
   },
   optimization: {
-    minimize: true,
-    minimizer: [new TerserPlugin({
-      terserOptions: {
-        compress: {
-          drop_console: true,
-          dead_code: true,
-        },
-        output: {
-          comments: false,
-        }
-      },
-      extractComments: false
-    })],
     splitChunks: { chunks: 'all' }
   },
   plugins: [

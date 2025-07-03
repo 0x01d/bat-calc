@@ -51,7 +51,6 @@ function update(changedId='') {
     let So  = +inputs.self_old.value || 0;
     let Snp = +inputs.self_new_pct.value || 0;
     let Sn  = +inputs.self_new.value || 0;
-    let profit = +inputs.profit || 0;
     const price     = +inputs.price_kwh.value   || 0;
     const installC  = +inputs.install_cost.value|| 0;
     const inc       = (+inputs.price_inc.value || 0) / 100;
@@ -99,7 +98,7 @@ function update(changedId='') {
 
     // profit kWh/year
     const profitKwh = Sn - So;
-    inputs.self_new.profit = rnd(profitKwh)
+    inputs.profit.value = rnd(profitKwh)
 
     // yearly profit in € for year 1
     const base = Number(profitKwh) * Number(price);
@@ -223,8 +222,8 @@ function drawChart(data, installC, paybackExact, isProfitable, life) {
         .attr('y1', y(installC)).attr('y2', y(installC))
         .attr('stroke', COLOR_ACCENT).attr('stroke-dasharray', '4 2').attr('stroke-width',2);
     svg.append('text')
-        .attr('x', x(data[data.length-1].month)).attr('y', y(installC) - 5)
-        .attr('fill', COLOR_ACCENT).attr('text-anchor','end')
+        .attr('x', x(data[0].month) + 100).attr('y', y(installC) - 5)
+    .attr('fill', COLOR_ACCENT).attr('text-anchor','end')
         .text('Installatiekost');
 
     // axes
