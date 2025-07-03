@@ -58,7 +58,7 @@ function update(changedId='') {
 
     // enforce max power
     if (P > MAX_POWER) {
-        notyf.error('Je hebt de maximale capaciteit van de installatie overschreden');
+        //notyf.error('Je hebt de maximale capaciteit van de installatie overschreden');
         P = MAX_POWER;
         inputs.power.value = rnd(P);
     }
@@ -228,7 +228,7 @@ function drawChart(data, installC, paybackExact, isProfitable, life) {
     // axes
     svg.append('g')
         .attr('transform', `translate(0,${height - margin.bottom})`)
-        .call(d3.axisBottom(x).ticks(life).tickFormat(d3.format('d')));
+        .call(d3.axisBottom(x).ticks(10).tickFormat(d3.format('d')));
     svg.append('g')
         .attr('transform', `translate(${margin.left},0)`)
         .call(d3.axisLeft(y));
@@ -263,7 +263,7 @@ function drawTable(data, isProfitable) {
       <thead>
         <tr><th>Jaar</th><th>Opbrengst (€)</th><th>Cumulatief (€)</th></tr>
       </thead><tbody>`;
-    data.slice(1).forEach(d => {
+    data.forEach(d => {
         html += `
       <tr>
         <td>${d.year}</td>
