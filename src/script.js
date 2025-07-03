@@ -105,7 +105,7 @@ function update(changedId='') {
     let dataYearly = [{ year: 0, priceKwh: price, yearly: base, cumul: base}];
     let dataMonthly = [{ month: 0, priceKwh: price, monthly: base / 12,  cumul: base / 12 }];
 
-    let stopCounting = false;
+    let keepCounting = true;
     let month = 1;
     let monthCount = 0;
     for (let y = 1; y <= life; y++) {
@@ -121,7 +121,6 @@ function update(changedId='') {
             yearly: base,
             cumul: prevCumul + base,
         });
-        console.log(dataYearly)
 
         for (let i = 1; i <= 12; i++){
             const prevMonthCumul = dataMonthly[month - 1].cumul;
@@ -132,14 +131,16 @@ function update(changedId='') {
                 month: month,
                 priceKwh: newPriceKwh,
                 monthly: base / 12,
-                cumul: thisMonthProfit + base / 12,
+                cumul: cumul
             })
-
-            if (cumul >= 0 && !stopCounting){
+            console.log(dataMonthly)
+            if (cumul >= installC && keepCounting == true){
                 monthCount = month
+                keepCounting = false
+                console.log(keepCounting)
             }
 
-            month += 1;
+            month++;
         }
     }
 
@@ -151,12 +152,12 @@ function update(changedId='') {
 
 
     // text summary
-    const avgText = `Je spaart gemiddeld <strong>€${average}</strong> per jaar, over ${life} jaar.`;
+    const avgText = `Je spaart gemiddeld <strong>€${rnd(average)}</strong> per jaar, over ${life} jaar.`;
     const profitColor = isProfitable ? COLOR_PRIMARY : COLOR_NOT_PROF;
     const totalText = `Je totale winst op de batterij is <strong style="color:${profitColor}">€${rnd(totalProfit)}</strong>.`;
 
     let paybackText;
-    if (isProfitable > 0) {
+    if (isProfitable) {
         paybackText = `Je batterij is terugbetaald na <strong>${monthCount}</strong> maanden.`;
     } else {
         paybackText = `Je batterij, is niet rendabel.`;
@@ -169,14 +170,14 @@ function update(changedId='') {
   `;
 
     // render chart and table
-    drawChart(dataYearly, installC, isProfitable);
+    drawChart(dataMonthly, installC, monthCount, isProfitable, life);
     drawTable(dataYearly, isProfitable);
 }
 
 /**
  * draw cumulative profit chart with D3
  */
-function drawChart(data, installC, paybackExact, isProfitable) {
+function drawChart(data, installC, paybackExact, isProfitable, life) {
     const cont = d3.select('#chart-div');
     cont.selectAll('*').remove();
     const width  = cont.node().clientWidth;
@@ -189,7 +190,7 @@ function drawChart(data, installC, paybackExact, isProfitable) {
     // y domain includes install cost line
     const maxC = Math.max(d3.max(data, d => d.cumul), installC);
     const x = d3.scaleLinear()
-        .domain([0, d3.max(data, d => d.year)])
+        .domain([0, d3.max(data, d => d.month)])
         .range([margin.left, width - margin.right]);
     const y = d3.scaleLinear()
         .domain([0, maxC]).nice()
@@ -200,7 +201,7 @@ function drawChart(data, installC, paybackExact, isProfitable) {
         .datum(data)
         .attr('fill', COLOR_PRIMARY).attr('fill-opacity', 0.3)
         .attr('d', d3.area()
-            .x(d => x(d.year))
+            .x(d => x(d.month))
             .y0(y(0))
             .y1(d => y(d.cumul))
         );
@@ -210,24 +211,24 @@ function drawChart(data, installC, paybackExact, isProfitable) {
         .datum(data)
         .attr('fill','none').attr('stroke',COLOR_PRIMARY).attr('stroke-width',2)
         .attr('d', d3.line()
-            .x(d => x(d.year))
+            .x(d => x(d.month))
             .y(d => y(d.cumul))
         );
 
     // installation cost line
     svg.append('line')
-        .attr('x1', x(0)).attr('x2', x(data[data.length-1].year))
+        .attr('x1', x(0)).attr('x2', x(data[data.length-1].month))
         .attr('y1', y(installC)).attr('y2', y(installC))
         .attr('stroke', COLOR_ACCENT).attr('stroke-dasharray', '4 2').attr('stroke-width',2);
     svg.append('text')
-        .attr('x', x(data[data.length-1].year)).attr('y', y(installC) - 5)
+        .attr('x', x(data[data.length-1].month)).attr('y', y(installC) - 5)
         .attr('fill', COLOR_ACCENT).attr('text-anchor','end')
         .text('Installatiekost');
 
     // axes
     svg.append('g')
         .attr('transform', `translate(0,${height - margin.bottom})`)
-        .call(d3.axisBottom(x).ticks(data.length).tickFormat(d3.format('d')));
+        .call(d3.axisBottom(x).ticks(life).tickFormat(d3.format('d')));
     svg.append('g')
         .attr('transform', `translate(${margin.left},0)`)
         .call(d3.axisLeft(y));
@@ -235,13 +236,20 @@ function drawChart(data, installC, paybackExact, isProfitable) {
     // payback marker if profitable
     if (isProfitable) {
         svg.append('line')
-            .attr('x1', x(paybackExact)).attr('x2', x(paybackExact))
-            .attr('y1', y(0)).attr('y2', y(maxC))
-            .attr('stroke', COLOR_ACCENT).attr('stroke-dasharray', '4 2').attr('stroke-width',2);
+            .attr('x1', x(paybackExact))
+            .attr('x2', x(paybackExact))
+            .attr('y1', y(0))
+            .attr('y2', y(maxC))
+            .attr('stroke', COLOR_ACCENT)
+            .attr('stroke-dasharray', '4 2')
+            .attr('stroke-width', 2);
+
         svg.append('text')
-            .attr('x', x(paybackExact)).attr('y', margin.top)
-            .attr('fill', COLOR_ACCENT).attr('text-anchor','middle')
-            .text(`Terugbetaald`);
+            .attr('x', x(data[paybackExact].month))
+            .attr('y', margin.top)
+            .attr('fill', COLOR_ACCENT)
+            .attr('text-anchor', 'middle')
+            .text('Terugbetaald');
     }
 }
 
