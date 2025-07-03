@@ -98,6 +98,7 @@ function update(changedId='') {
 
     // profit kWh/year
     const profitKwh = Sn - So;
+    inputs.self_new.value = rnd(profitKwh)
 
     // yearly profit in € for year 1
     const base = Number(profitKwh) * Number(price);
