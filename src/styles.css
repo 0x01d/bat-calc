@@ -63,6 +63,7 @@ input:focus {
 #text-div p {
   margin: 0.5rem 0;
 }
+
 #chart-div {
   overflow-x: auto;
 }

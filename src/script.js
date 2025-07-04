@@ -149,25 +149,24 @@ function update(changedId='') {
     // if never profitable, totalProfit is negative
     const totalProfit = dataYearly[life].cumul - installC;
     const isProfitable = totalProfit > 0 ? true : false;
-    const average = totalProfit / life;
+    //const average = totalProfit / life;
 
 
     // text summary
-    const avgText = `Je spaart gemiddeld <strong>€${rnd(average)}</strong> per jaar, over ${life} jaar.`;
+    //const avgText = `Je spaart gemiddeld <strong>€${rnd(average)}</strong> per jaar, over ${life} jaar.`;
     const profitColor = isProfitable ? COLOR_PRIMARY : COLOR_NOT_PROF;
-    const totalText = `Je totale winst op de batterij is <strong style="color:${profitColor}">€${rnd(totalProfit)}</strong>.`;
+    const totalText = `Je batterij brengt na ${life} jaar <strong style="color:${profitColor}">€${rnd(totalProfit)}</strong> op.`;
 
     let paybackText;
     if (isProfitable) {
-        paybackText = `Je batterij is terugbetaald na <strong>${monthCount}</strong> maanden.`;
+        paybackText = `Je batterij is terugbetaald na <strong>${monthCount}</strong> maand.`;
     } else {
         paybackText = `Je batterij, is niet rendabel.`;
     }
 
     document.getElementById('text-div').innerHTML = `
-    <p>${avgText}</p>
-    <p>${paybackText}</p>
-    <p>${totalText}</p>
+    <h2>${totalText}</h2>
+    <h3>${paybackText}</h3>
   `;
 
     // render chart and table
