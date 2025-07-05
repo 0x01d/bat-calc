@@ -7,68 +7,72 @@
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <div id="battery-calculator" class="container">
-    <section id="form-div" class="panel">
-      <h2>Invoergegevens</h2>
-      <div class="grid-form">
-        <label>
-          Vermogen installatie (W)
-          <input id="power" type="number" step="any">
-        </label>
-        <label>
-          Opbrengst (kWh/jaar)
-          <input id="yield" type="number" step="any">
-        </label>
-        <label>
-          Zelfverbruik oud (%)
-          <input id="self_old_pct" type="number" step="any">
-        </label>
-        <label>
-          Zelfverbruik oud (kWh/jaar)
-          <input id="self_old" type="number" step="any">
-        </label>
-        <label>
-          Zelfverbruik nieuw (%)
-          <input id="self_new_pct" type="number" step="any">
-        </label>
-        <label>
-          Zelfverbruik nieuw (kWh/jaar)
-          <input id="self_new" type="number" step="any">
-        </label>
-        <label>
-          Prijs per kWh (€)
-          <input id="price_kwh" type="number" step="any">
-        </label>
-        <label>
-          Winst (kWh/jaar)
-          <input id="profit" type="number" step="any" readonly>
-        </label>
-        <label>
-          Kostprijs installatie (€)
-          <input id="install_cost" type="number" step="any">
-        </label>
-        <label>
-          Prijsstijging elektriciteit (%/jaar)
-          <input id="price_inc" type="number" step="any">
-        </label>
-        <label>
-          Levensduur batterij (jaar)
-          <input id="lifespan" type="number" step="1">
-        </label>
-      </div>
-      <div class="form-actions">
-        <button type="button" id="reset-btn">Reset</button>
-      </div>
-    </section>
+    <div id="battery-calculator" class="container">
+        <section id="form-div" class="panel">
+            <h3>Invoergegevens</h3>
+            <label>
+                Gekende opbrengst van de zonnepanelen gedurende 1j in (kWh/jaar):
+                <input id="yield" type="number" step="any">
+            </label>
+            </br>
+            <hr>
+            </br>
+            <label>
+                Vermogen installatie (W)
+                <input id="power" type="number" step="any">
+            </label>
+            </br>
+            <div class="grid-form">
+                <label>
+                    Zelfverbruik oud (%)
+                    <input id="self_old_pct" type="number" step="any">
+                </label>
+                <label>
+                    Zelfverbruik oud (kWh/jaar)
+                    <input id="self_old" type="number" step="any">
+                </label>
+                <label>
+                    Zelfverbruik nieuw (%)
+                    <input id="self_new_pct" type="number" step="any">
+                </label>
+                <label>
+                    Zelfverbruik nieuw (kWh/jaar)
+                    <input id="self_new" type="number" step="any">
+                </label>
+                <label>
+                    Prijs per kWh (€)
+                    <input id="price_kwh" type="number" step="any">
+                </label>
+                <label>
+                    Winst (kWh/jaar)
+                    <input id="profit" type="number" step="any" disabled>
+                </label>
+                <label>
+                    Kostprijs installatie (€)
+                    <input id="install_cost" type="number" step="any">
+                </label>
+                <label>
+                    Prijsstijging elektriciteit (%/jaar)
+                    <input id="price_inc" type="number" step="any">
+                </label>
+                <label>
+                    Levensduur batterij (jaar)
+                    <input id="lifespan" type="number" step="1">
+                </label>
+                <button type="button" id="reset-btn">Reset</button>
+            </div>
+            <br><br>
+            <p> Alle waarden in de calculator zijn aanpasbaar.</p>
+        </section>
 
-    <section id="table-div" class="panel">
-    </section>
+        <section id="table-div" class="panel">
+        </section>
 
-    <section id="text-div" class="panel">
-    </section>
+        <section id="text-div" class="panel">
+        </section>
 
-    <section id="chart-div" class="panel">
-    </section>
-  </div>
+        <section id="chart-div" class="panel">
+        </section>
+    </div>
 </body>
 </html>

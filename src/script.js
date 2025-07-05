@@ -7,8 +7,8 @@ import * as d3 from 'd3';
 
 // default configuration
 const DEFAULTS = {
-    power:         3000,  // W
-    yield:         2700,  // kWh/year (90% of power)
+    power:         0,  // W
+    yield:         0,  // kWh/year (90% of power)
     self_old_pct:    30,  // % old self-consumption
     self_new_pct:    65,  // % new self-consumption
     price_kwh:     0.32,  // € per kWh
@@ -156,9 +156,11 @@ function update(changedId='') {
     const profitColor = isProfitable ? COLOR_PRIMARY : COLOR_NOT_PROF;
     const totalText = `Je batterij brengt na ${life} jaar <strong style="color:${profitColor}">€${rnd(dataYearly[life].cumul)}</strong> op.`;
 
+    const years = Math.floor(monthCount / 12);
+    const months = monthCount % 12;
     let paybackText;
     if (isProfitable) {
-        paybackText = `Je batterij is terugbetaald na <strong>${monthCount}</strong> maand.`;
+        paybackText = `Je batterij is terugbetaald na <strong>${years}</strong> jaar en <strong>${months}</strong> maand.`;
     } else {
         paybackText = `Je batterij, is niet rendabel.`;
     }
