@@ -73,7 +73,7 @@ table {
   margin-top: 0.5rem;
 }
 th, td {
-  padding: 0.6rem;
+  padding: 0.5rem;
   text-align: right;
   border: 1px solid #e0e0e0;
 }
@@ -86,3 +86,21 @@ tr.highlight {
 tr:hover {
   background: #f9f9f9;
 }
+#text-div {
+  margin-top: 1rem;
+  gap: 1rem;
+  width: 100%;
+  max-width:1000px;
+}
+#chart-div {
+  margin-top: 1rem;
+  gap: 1rem;
+  text-align: center;
+  max-width:1000px;
+}
+#text-and-charts {
+  display: flex;
+  grid-column: span 2;
+  flex-direction:column;
+}
+
