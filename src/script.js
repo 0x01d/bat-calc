@@ -230,7 +230,9 @@ function drawChart(data, installC, paybackExact, isProfitable, life) {
         .call(d3.axisBottom(x).ticks(life).tickFormat((d => (data[d] ? data[d].year : ''))));
     svg.append('g')
         .attr('transform', `translate(${margin.left},0)`)
-        .call(d3.axisLeft(y));
+        .call(d3.axisLeft(y).tickFormat( d => (`€${d}`)))
+        .selectAll('text')
+        .style('font-size', '10px')
     // X-axis label
     svg.append('text')
         .attr('x', width / 2)
