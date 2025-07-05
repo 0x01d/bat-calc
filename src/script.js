@@ -7,11 +7,11 @@ import * as d3 from 'd3';
 
 // default configuration
 const DEFAULTS = {
-    power:         4000,  // W
+    power:         3000,  // W
     yield:         2700,  // kWh/year (90% of power)
     self_old_pct:    30,  // % old self-consumption
-    self_new_pct:    60,  // % new self-consumption
-    price_kwh:     0.41,  // € per kWh
+    self_new_pct:    65,  // % new self-consumption
+    price_kwh:     0.32,  // € per kWh
     install_cost: 2000,   // € installation cost
     price_inc:       4,   // % price increase per year
     lifespan:       14    // years
@@ -154,7 +154,7 @@ function update(changedId='') {
     // text summary
     //const avgText = `Je spaart gemiddeld <strong>€${rnd(average)}</strong> per jaar, over ${life} jaar.`;
     const profitColor = isProfitable ? COLOR_PRIMARY : COLOR_NOT_PROF;
-    const totalText = `Je batterij brengt na ${life} jaar <strong style="color:${profitColor}">€${rnd(totalProfit)}</strong> op.`;
+    const totalText = `Je batterij brengt na ${life} jaar <strong style="color:${profitColor}">€${rnd(dataYearly[life].cumul)}</strong> op.`;
 
     let paybackText;
     if (isProfitable) {
