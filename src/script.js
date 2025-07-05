@@ -231,7 +231,24 @@ function drawChart(data, installC, paybackExact, isProfitable, life) {
     svg.append('g')
         .attr('transform', `translate(${margin.left},0)`)
         .call(d3.axisLeft(y));
+    // X-axis label
+    svg.append('text')
+        .attr('x', width / 2)
+        .attr('y', height - 10)
+        .attr('text-anchor', 'middle')
+        .attr('fill', '#444')
+        .attr('font-size', '13px')
+        .text('Jaar');
 
+    // Y-axis label
+    svg.append('text')
+        .attr('transform', 'rotate(-90)')
+        .attr('x', - height / 2)
+        .attr('y', 10)
+        .attr('text-anchor', 'middle')
+        .attr('fill', '#444')
+        .attr('font-size', '13px')
+        .text('Opbrengst');
     // payback marker if profitable
     if (isProfitable) {
         svg.append('line')
