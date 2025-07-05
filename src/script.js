@@ -229,7 +229,7 @@ function drawChart(data, installC, paybackExact, isProfitable, life) {
     // axes
     svg.append('g')
         .attr('transform', `translate(0,${height - margin.bottom})`)
-        .call(d3.axisBottom(x).ticks(life).tickFormat((d => (data[d] ? data[d].year : ''))));
+        .call(d3.axisBottom(x).ticks(data.length).tickFormat(d => d % 12 === 0 ? d / 12 : null));
     svg.append('g')
         .attr('transform', `translate(${margin.left},0)`)
         .call(d3.axisLeft(y).tickFormat( d => (`€${d}`)))
