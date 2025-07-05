@@ -8,13 +8,13 @@ import * as d3 from 'd3';
 // default configuration
 const DEFAULTS = {
     power:         4000,  // W
-    yield:         3600,  // kWh/year (90% of power)
+    yield:         2700,  // kWh/year (90% of power)
     self_old_pct:    30,  // % old self-consumption
-    self_new_pct:    75,  // % new self-consumption
+    self_new_pct:    60,  // % new self-consumption
     price_kwh:     0.41,  // € per kWh
-    install_cost: 4000,   // € installation cost
+    install_cost: 2000,   // € installation cost
     price_inc:       4,   // % price increase per year
-    lifespan:       12    // years
+    lifespan:       14    // years
 };
 
 // maximum allowed power (W)
@@ -110,11 +110,10 @@ function update(changedId='') {
     let month = 1;
     let monthCount = 0;
     for (let y = 1; y <= life; y++) {
-        const prevPriceKwh = dataYearly[y-1].priceKwh;
         const prevCumul = dataYearly[y-1].cumul;
 
-        const newPriceKwh = prevPriceKwh * inc / 100 + prevPriceKwh; 
-        
+        const newPriceKwh = price * Math.pow(1 + inc, y); 
+        console.log(newPriceKwh)
         const base = newPriceKwh * profitKwh;
         dataYearly.push({
             year: y,
@@ -134,7 +133,6 @@ function update(changedId='') {
                 monthly: base / 12,
                 cumul: cumul
             })
-            console.log(dataMonthly)
             if (cumul >= installC && keepCounting == true){
                 monthCount = month
                 keepCounting = false
@@ -278,6 +276,11 @@ function drawTable(data, isProfitable) {
 // attach input listeners
 Object.keys(inputs).forEach(id => {
     inputs[id].addEventListener('input', () => update(id));
+});
+
+document.getElementById('reset-btn').addEventListener('click', () => {
+    initDefaults();
+    update();
 });
 
 // initial render
