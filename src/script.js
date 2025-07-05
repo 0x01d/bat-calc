@@ -131,7 +131,8 @@ function update(changedId='') {
                 month: month,
                 priceKwh: newPriceKwh,
                 monthly: base / 12,
-                cumul: cumul
+                cumul: cumul,
+                year: y
             })
             if (cumul >= installC && keepCounting == true){
                 monthCount = month
@@ -226,7 +227,7 @@ function drawChart(data, installC, paybackExact, isProfitable, life) {
     // axes
     svg.append('g')
         .attr('transform', `translate(0,${height - margin.bottom})`)
-        .call(d3.axisBottom(x).ticks(10).tickFormat(d3.format('d')));
+        .call(d3.axisBottom(x).ticks(life).tickFormat((d => (data[d] ? data[d].year : ''))));
     svg.append('g')
         .attr('transform', `translate(${margin.left},0)`)
         .call(d3.axisLeft(y));
