@@ -7,14 +7,14 @@ import * as d3 from 'd3';
 
 // default configuration
 const DEFAULTS = {
-    power:         0,  // W
-    yield:         0,  // kWh/year (90% of power)
+    power:         3888.89,  // W
+    yield:         3500,  // kWh/year (90% of power)
     self_old_pct:    30,  // % old self-consumption
     self_new_pct:    65,  // % new self-consumption
     price_kwh:     0.32,  // € per kWh
-    install_cost: 2000,   // € installation cost
+    install_cost: 1950,   // € installation cost
     price_inc:       4,   // % price increase per year
-    lifespan:       14    // years
+    lifespan:       15    // years
 };
 
 // maximum allowed power (W)

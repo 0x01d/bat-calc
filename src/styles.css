@@ -43,9 +43,16 @@ h2 {
 }
 
 .grid-form {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
+  display: grid;
+  gap: 1rem 1rem;
+  grid-template-columns: 1fr 1fr;
+  width: 100%;
+}
+
+@media (max-width: 500px) {
+  .grid-form {
+    grid-template-columns: 1fr; /* stack fields on narrow screens */
+  }
 }
 
 label {
